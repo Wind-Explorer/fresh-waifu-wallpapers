@@ -42,6 +42,10 @@
         "height": 600,
         "visible": false
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    }
   }
 }
