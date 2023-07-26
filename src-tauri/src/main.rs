@@ -10,7 +10,6 @@ use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent,
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
-
 fn main() {
     // Define menu item entries
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh wallpaper");
@@ -33,7 +32,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![greet])
         .system_tray(system_tray)
-        .on_system_tray_event(|app, event| match event {
+        .on_system_tray_event(|_app, event| match event {
             SystemTrayEvent::LeftClick {
               position: _,
               size: _,
@@ -51,7 +50,10 @@ fn main() {
             SystemTrayEvent::MenuItemClick { id, .. } => {
               match id.as_str() {
                 "refresh" => {
-                    refresh_wallpaper::refresh_wallpaper();
+                    match tauri::async_runtime::block_on(refresh_wallpaper::refresh_wallpaper()) {
+                        Ok(()) => (),
+                        Err(_) => eprintln!("Error refreshing"),
+                    };
                 },
                 "quit" => {
                   std::process::exit(0);
