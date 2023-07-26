@@ -54,7 +54,7 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
   let dl_url = new_wallpaper_url(&client).await.unwrap();
   let downloaded_file = download_file_from_url(&client, dl_url, image_file).await.unwrap();
   wallpaper::set_from_path(downloaded_file.display().to_string().as_str()).unwrap();
-  match wallpaper::set_mode(wallpaper::Mode::Fit) {
+  match wallpaper::set_mode(wallpaper::Mode::Crop) {
     Ok(()) => (),
     Err(_) => eprintln!("Failed to set wallpaper crop mode!")
   };
