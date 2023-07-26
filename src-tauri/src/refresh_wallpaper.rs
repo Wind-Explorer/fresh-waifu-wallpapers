@@ -1,9 +1,25 @@
 use tauri::api::path::cache_dir;
-
-use std::{collections::HashMap, path::PathBuf};
-
+use std::{collections::HashMap, path::PathBuf, io::Cursor};
+use image::{GenericImageView, DynamicImage, EncodableLayout, ImageOutputFormat};
 use rand::Rng;
 
+pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
+  // Get image dimensions
+  let (width, height) = image_obj.dimensions();
+  // Check if height is larger than width
+  if height > width {
+      // Define the coordinates and dimensions of the crop rectangle
+      let x = 0;
+      let y = 0;
+      let new_height = height / 2;
+      
+      // Crop the image
+      return Some(image_obj.crop_imm(x, y, width, new_height));
+  }
+  else {
+    return None;
+  }
+}
 
 pub async fn new_wallpaper_url(client: &reqwest::Client) -> Result<String, reqwest::Error> {
   let result = client.get("https://api.waifu.pics/sfw/waifu")
@@ -21,7 +37,11 @@ pub async fn download_file_from_url(client: &reqwest::Client, url: String, path:
   .await?
   .bytes()
   .await?;
-  match std::fs::write(&path, result) {
+  let img = image::load_from_memory(result.as_bytes()).unwrap();
+  let mut image_bytes: Vec<u8> = Vec::new();
+  let result_image = sanitize_image_dimensions(&img).unwrap_or(img);
+  result_image.write_to(&mut Cursor::new(&mut image_bytes), ImageOutputFormat::Png).unwrap();
+  match std::fs::write(&path, image_bytes) {
     Ok(_) => return Ok(path),
     Err(x) => panic!("{}", x)
   };
