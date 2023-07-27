@@ -2,6 +2,20 @@ use image::{DynamicImage, EncodableLayout, GenericImageView, ImageOutputFormat};
 use std::{collections::HashMap, io::Cursor, path::PathBuf};
 use tauri::api::path::cache_dir;
 
+pub enum WallpaperSource {
+  WaifuPics,
+  WaifuIm,
+  NekosBest,
+}
+
+pub fn resolve_wallpaper_source_api(source: WallpaperSource) -> Result<&'static str, &'static str> {
+  match source {
+    WallpaperSource::WaifuPics => return Ok("https://api.waifu.pics/sfw/waifu"),
+    WallpaperSource::WaifuIm => return Ok("https://api.waifu.im/search?included_tags=maid"),
+    WallpaperSource::NekosBest => return Err("No API URL"),
+  }
+}
+
 pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
     // Get image dimensions
     let (width, height) = image_obj.dimensions();
