@@ -1,7 +1,6 @@
 use tauri::api::path::cache_dir;
 use std::{collections::HashMap, path::PathBuf, io::Cursor};
 use image::{GenericImageView, DynamicImage, EncodableLayout, ImageOutputFormat};
-use rand::Rng;
 
 pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
   // Get image dimensions
@@ -50,8 +49,9 @@ pub async fn download_file_from_url(client: &reqwest::Client, url: String, path:
 pub async fn refresh_wallpaper() -> Result<(), ()> {
   println!("Refreshing wallpaper in function...");
   let client = reqwest::Client::new();
-  let image_file = cache_dir().unwrap().join(format!("{}.png", rand::thread_rng().gen_range(1000..10000)));
   let dl_url = new_wallpaper_url(&client).await.unwrap();
+  let file_name = dl_url.split("/").collect::<Vec<&str>>();
+  let image_file = cache_dir().unwrap().join(file_name[file_name.len() - 1]);
   let downloaded_file = download_file_from_url(&client, dl_url, image_file).await.unwrap();
   wallpaper::set_from_path(downloaded_file.display().to_string().as_str()).unwrap();
   match wallpaper::set_mode(wallpaper::Mode::Crop) {
