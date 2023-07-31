@@ -48,7 +48,7 @@ fn main() {
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "refresh" => {
-                    match tauri::async_runtime::block_on(refresh_wallpaper::refresh_wallpaper()) {
+                    match tauri::async_runtime::block_on(refresh_wallpaper::refresh_wallpaper("1".to_string())) {
                         Ok(()) => (),
                         Err(_) => eprintln!("Error refreshing"),
                     };
