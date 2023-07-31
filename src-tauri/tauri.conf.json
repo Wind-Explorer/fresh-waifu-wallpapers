@@ -33,7 +33,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "cn.Wind_Explorer.freshwaifuwallpaper",
+      "identifier": "cn.Wind-Explorer.freshwaifuwallpaper",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
