@@ -5,16 +5,11 @@ mod refresh_wallpaper;
 
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 fn main() {
     // Define menu item entries
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh wallpaper");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-
+    
     // Populate tray menu with entries
     let tray_menu = SystemTrayMenu::new()
         .add_item(refresh)
@@ -29,7 +24,7 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1000));
             }
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![])
         .system_tray(system_tray)
         .on_system_tray_event(|_app, event| match event {
             SystemTrayEvent::LeftClick {
