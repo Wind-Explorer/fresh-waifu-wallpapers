@@ -4,4 +4,5 @@ Lazy to find nice waifu wallpapers by yourself?
 
 ### Check out this app today! Helps you find waifu wallpapers.
 
-![image](https://github.com/Wind-Explorer/fresh-waifu-wallpapers/assets/66894537/a63a7500-aa92-4372-87c1-d7ddb7c08ce0)
+![image](https://github.com/Wind-Explorer/fresh-waifu-wallpapers/assets/66894537/8e44779b-7b85-43cd-814b-55463d6c94a8)
+
