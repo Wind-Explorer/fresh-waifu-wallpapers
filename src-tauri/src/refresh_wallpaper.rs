@@ -9,6 +9,10 @@ pub enum WallpaperSource {
   NekosBest,
 }
 
+fn resolve_cache_dir() -> PathBuf {
+  return cache_dir().unwrap().join("WaifuWallpaperFetcher");
+}
+
 pub fn resolve_wallpaper_source_api(source: WallpaperSource) -> Result<&'static str, &'static str> {
   match source {
     WallpaperSource::WaifuPics => return Ok("https://api.waifu.pics/sfw/waifu"),
@@ -46,6 +50,10 @@ pub async fn download_file_from_url(
     result_image
         .write_to(&mut Cursor::new(&mut image_bytes), ImageOutputFormat::Png)
         .unwrap();
+    match std::fs::create_dir(&path.parent().unwrap()) {
+      Ok(_) => (),
+      Err(_) => (),
+    };
     match std::fs::write(&path, image_bytes) {
         Ok(_) => return Ok(path),
         Err(x) => panic!("{}", x),
@@ -86,7 +94,7 @@ pub async fn refresh_wallpaper(options: String) -> Result<(), ()> {
     }
     let dl_url = new_wallpaper_url(&client, wallpaper_source).await.unwrap();
     let file_name = dl_url.split("/").collect::<Vec<&str>>();
-    let image_file = cache_dir().unwrap().join(file_name[file_name.len() - 1]);
+    let image_file = resolve_cache_dir().join(file_name[file_name.len() - 1]);
     let downloaded_file = download_file_from_url(&client, dl_url, image_file)
         .await
         .unwrap();
@@ -96,4 +104,16 @@ pub async fn refresh_wallpaper(options: String) -> Result<(), ()> {
         Err(_) => eprintln!("Failed to set wallpaper crop mode!"),
     };
     return Ok(());
+}
+
+pub fn clear_cache() {
+  let path = resolve_cache_dir();
+  match std::fs::remove_dir_all(&path) {
+    Ok(_) => println!("Remove cache dir successful!"),
+    Err(_) => eprintln!("Remove cache dir failed!")
+  };
+  match std::fs::create_dir(&path) {
+    Ok(_) => println!("Creation of cache dir successful!"),
+    Err(_) => eprintln!("Creation of cache dir failed!")
+  };
 }

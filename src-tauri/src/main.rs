@@ -8,14 +8,16 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemT
 fn main() {
     // Define menu item entries
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh wallpaper");
+    let clear_cache = CustomMenuItem::new("clear_cache".to_string(), "Clear cache");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     
     // Populate tray menu with entries
     let tray_menu = SystemTrayMenu::new()
         .add_item(refresh)
         .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(clear_cache)
         .add_item(quit);
-
+    
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
@@ -47,6 +49,9 @@ fn main() {
                         Ok(()) => (),
                         Err(_) => eprintln!("Error refreshing"),
                     };
+                }
+                "clear_cache" => {
+                    refresh_wallpaper::clear_cache();
                 }
                 "quit" => {
                     std::process::exit(0);
