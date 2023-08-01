@@ -1,24 +1,9 @@
 use image::{DynamicImage, EncodableLayout, GenericImageView, ImageOutputFormat};
-use std::{collections::HashMap, io::Cursor, path::PathBuf};
+use std::{io::Cursor, path::PathBuf};
 use tauri::api::path::cache_dir;
-
-#[derive(PartialEq)]
-pub enum WallpaperSource {
-  WaifuPics,
-  WaifuIm,
-  NekosBest,
-}
 
 fn resolve_cache_dir() -> PathBuf {
   return cache_dir().unwrap().join("WaifuWallpaperFetcher");
-}
-
-pub fn resolve_wallpaper_source_api(source: WallpaperSource) -> Result<&'static str, &'static str> {
-  match source {
-    WallpaperSource::WaifuPics => return Ok("https://api.waifu.pics/sfw/waifu"),
-    WallpaperSource::WaifuIm => return Ok("https://api.waifu.im/search?included_tags=maid"),
-    WallpaperSource::NekosBest => return Err("No API URL"),
-  }
 }
 
 pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
@@ -60,39 +45,15 @@ pub async fn download_file_from_url(
     };
 }
 
-async fn get_string_from_url(client: &reqwest::Client, url: &str) -> Result<String, reqwest::Error> {
-  let result = client
-  .get(url)
-  .send()
-  .await?
-  .text()
-  .await?;
-  return Ok(result);
+pub async fn new_wallpaper_url() -> Result<String, reqwest::Error> {
+  let img_url: String = nekosbest::get(nekosbest::Category::Neko).await.unwrap().url;
+  return Ok(img_url);
 }
 
-pub async fn new_wallpaper_url(client: &reqwest::Client, source: WallpaperSource) -> Result<String, reqwest::Error> {
-  if source == WallpaperSource::NekosBest {
-    println!("NekosBest source used!");
-    let img_url: String = nekosbest::get(nekosbest::Category::Neko).await.unwrap().url;
-    return Ok(img_url);
-  }
-  let result = get_string_from_url(client, resolve_wallpaper_source_api(source).unwrap()).await?;
-  let decoded_result: &String =
-      &serde_json::from_str::<HashMap<String, String>>(&result).unwrap()["url"];
-  return Ok(decoded_result.clone());
-}
-
-pub async fn refresh_wallpaper(options: String) -> Result<(), ()> {
+pub async fn refresh_wallpaper() -> Result<(), ()> {
     println!("Refreshing wallpaper in function...");
     let client = reqwest::Client::new();
-    let wallpaper_source: WallpaperSource;
-    match options.as_str() {
-      "0" => wallpaper_source = WallpaperSource::WaifuPics,
-      "1" => wallpaper_source = WallpaperSource::WaifuIm,
-      "2" => wallpaper_source = WallpaperSource::NekosBest,
-      &_ => todo!()
-    }
-    let dl_url = new_wallpaper_url(&client, wallpaper_source).await.unwrap();
+    let dl_url = new_wallpaper_url().await.unwrap();
     let file_name = dl_url.split("/").collect::<Vec<&str>>();
     let image_file = resolve_cache_dir().join(file_name[file_name.len() - 1]);
     let downloaded_file = download_file_from_url(&client, dl_url, image_file)
