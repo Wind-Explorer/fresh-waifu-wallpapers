@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod refresh_wallpaper;
+mod notifications;
 
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
@@ -19,7 +20,7 @@ fn main() {
         .add_item(quit);
     
     let system_tray = SystemTray::new().with_menu(tray_menu);
-
+    notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.");
     tauri::Builder::default()
         .on_window_event(|e| {
             if let tauri::WindowEvent::Resized(_) = e.event() {
@@ -62,4 +63,5 @@ fn main() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+
 }

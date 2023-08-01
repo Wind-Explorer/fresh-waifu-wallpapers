@@ -51,7 +51,7 @@ pub async fn new_wallpaper_url() -> Result<String, reqwest::Error> {
 }
 
 pub async fn refresh_wallpaper() -> Result<(), ()> {
-    println!("Refreshing wallpaper in function...");
+    crate::notifications::send_notification("Finding new wallpaper...", "This will take a second.");
     let client = reqwest::Client::new();
     let dl_url = new_wallpaper_url().await.unwrap();
     let file_name = dl_url.split("/").collect::<Vec<&str>>();
@@ -59,10 +59,16 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
     let downloaded_file = download_file_from_url(&client, dl_url, image_file)
         .await
         .unwrap();
-    wallpaper::set_from_path(downloaded_file.display().to_string().as_str()).unwrap();
-    match wallpaper::set_mode(wallpaper::Mode::Crop) {
-        Ok(()) => (),
-        Err(_) => eprintln!("Failed to set wallpaper crop mode!"),
+    match wallpaper::set_from_path(downloaded_file.display().to_string().as_str()) {
+      Ok(_) => {
+        println!("Successfully set wallpaper.");
+        crate::notifications::send_notification("Found one!", "Hope you like it.");
+        match wallpaper::set_mode(wallpaper::Mode::Crop) {
+          Ok(()) => (),
+          Err(_) => eprintln!("Failed to set wallpaper crop mode!"),
+        };
+      },
+      Err(x) => eprintln!("Error setting wallpaper: {}", x)
     };
     return Ok(());
 }
@@ -70,11 +76,16 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
 pub fn clear_cache() {
   let path = resolve_cache_dir();
   match std::fs::remove_dir_all(&path) {
-    Ok(_) => println!("Remove cache dir successful!"),
+    Ok(_) => {
+      println!("Remove cache dir successful!");
+      match std::fs::create_dir(&path) {
+        Ok(_) => {
+          println!("Creation of cache dir successful!");
+          crate::notifications::send_notification("Cache has been cleared!", "Room for new waifu wallpapers!");
+        },
+        Err(_) => eprintln!("Creation of cache dir failed!")
+      };
+    },
     Err(_) => eprintln!("Remove cache dir failed!")
-  };
-  match std::fs::create_dir(&path) {
-    Ok(_) => println!("Creation of cache dir successful!"),
-    Err(_) => eprintln!("Creation of cache dir failed!")
   };
 }

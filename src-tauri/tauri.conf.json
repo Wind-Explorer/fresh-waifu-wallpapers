@@ -28,6 +28,9 @@
         "assetScope": [
           "$APPCACHE/**"
         ]
+      },
+      "notification": {
+        "all": true
       }
     },
     "bundle": {
