@@ -20,6 +20,7 @@ reqwest = { version = "0.11.18", features = ["json"] }
 wallpaper = "3.2.0"
 image = "0.24.6"
 nekosbest = "0.17.0"
+opener = {version = "0.6.1", features = ["reveal"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

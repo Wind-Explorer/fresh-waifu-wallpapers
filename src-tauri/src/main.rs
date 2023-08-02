@@ -3,20 +3,28 @@
 
 mod refresh_wallpaper;
 mod notifications;
+mod cache_management;
 
-use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, SystemTraySubmenu};
 
 fn main() {
     // Define menu item entries
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh wallpaper");
-    let clear_cache = CustomMenuItem::new("clear_cache".to_string(), "Clear cache");
+    let clear_cache = CustomMenuItem::new("clear_cache".to_string(), "Clear");
+    let open_cache = CustomMenuItem::new("open_cache".to_string(), "Reveal");
+    let cache_menu = SystemTraySubmenu::new(
+        "Manage cache".to_string(),
+        SystemTrayMenu::new()
+        .add_item(clear_cache)
+        .add_item(open_cache)
+    );
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     
     // Populate tray menu with entries
     let tray_menu = SystemTrayMenu::new()
         .add_item(refresh)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(clear_cache)
+        .add_submenu(cache_menu)
         .add_item(quit);
     
     let system_tray = SystemTray::new().with_menu(tray_menu);
@@ -54,8 +62,11 @@ fn main() {
                         Err(_) => eprintln!("Error refreshing"),
                     };
                 }
+                "open_cache" => {
+                    cache_management::open_cache_dir();
+                }
                 "clear_cache" => {
-                    refresh_wallpaper::clear_cache();
+                    cache_management::clear_cache();
                 }
                 "quit" => {
                     std::process::exit(0);

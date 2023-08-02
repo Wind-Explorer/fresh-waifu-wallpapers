@@ -1,10 +1,5 @@
 use image::{DynamicImage, EncodableLayout, GenericImageView, ImageOutputFormat};
 use std::{io::Cursor, path::PathBuf};
-use tauri::api::path::cache_dir;
-
-fn resolve_cache_dir() -> PathBuf {
-  return cache_dir().unwrap().join("WaifuWallpaperFetcher");
-}
 
 pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
     // Get image dimensions
@@ -55,7 +50,7 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
     let client = reqwest::Client::new();
     let dl_url = new_wallpaper_url().await.unwrap();
     let file_name = dl_url.split("/").collect::<Vec<&str>>();
-    let image_file = resolve_cache_dir().join(file_name[file_name.len() - 1]);
+    let image_file = crate::cache_management::resolve_cache_dir().join(file_name[file_name.len() - 1]);
     let downloaded_file = download_file_from_url(&client, dl_url, image_file)
         .await
         .unwrap();
@@ -73,19 +68,3 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
     return Ok(());
 }
 
-pub fn clear_cache() {
-  let path = resolve_cache_dir();
-  match std::fs::remove_dir_all(&path) {
-    Ok(_) => {
-      println!("Remove cache dir successful!");
-      match std::fs::create_dir(&path) {
-        Ok(_) => {
-          println!("Creation of cache dir successful!");
-          crate::notifications::send_notification("Cache has been cleared!", "Room for new waifu wallpapers!");
-        },
-        Err(_) => eprintln!("Creation of cache dir failed!")
-      };
-    },
-    Err(_) => eprintln!("Remove cache dir failed!")
-  };
-}
