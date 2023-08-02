@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AppConfigurationPane from './views/AppConfigurationView.vue';
+
 </script>
 
 <template>
   <div class="container">
-    <AppConfigurationPane></AppConfigurationPane>
+    <h1>Preferences</h1>
   </div>
 </template>
 

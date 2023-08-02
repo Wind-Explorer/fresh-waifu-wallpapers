@@ -4,12 +4,14 @@
 mod refresh_wallpaper;
 mod notifications;
 mod cache_management;
+mod window_management;
 
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, SystemTraySubmenu};
 
 fn main() {
     // Define menu item entries
     let refresh = CustomMenuItem::new("refresh".to_string(), "Refresh wallpaper");
+    let show_configuration = CustomMenuItem::new("show_configuration".to_string(), "Preferences");
     let clear_cache = CustomMenuItem::new("clear_cache".to_string(), "Clear");
     let open_cache = CustomMenuItem::new("open_cache".to_string(), "Reveal");
     let cache_menu = SystemTraySubmenu::new(
@@ -24,6 +26,7 @@ fn main() {
     let tray_menu = SystemTrayMenu::new()
         .add_item(refresh)
         .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(show_configuration)
         .add_submenu(cache_menu)
         .add_item(quit);
     
@@ -38,6 +41,13 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1000));
             }
         })
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+              event.window().hide().unwrap();
+              api.prevent_close();
+            }
+            _ => {}
+          })
         .invoke_handler(tauri::generate_handler![])
         .system_tray(system_tray)
         .on_system_tray_event(|_app, event| match event {
@@ -61,6 +71,9 @@ fn main() {
                         Ok(()) => (),
                         Err(_) => eprintln!("Error refreshing"),
                     };
+                }
+                "show_configuration" => {
+                    window_management::show_main_window(_app)
                 }
                 "open_cache" => {
                     cache_management::open_cache_dir();
