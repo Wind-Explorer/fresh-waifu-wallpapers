@@ -20,8 +20,11 @@ fn main() {
         .add_item(quit);
     
     let system_tray = SystemTray::new().with_menu(tray_menu);
-    notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.");
     tauri::Builder::default()
+        .setup(|_| {
+            notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.");
+            Ok(())
+        })
         .on_window_event(|e| {
             if let tauri::WindowEvent::Resized(_) = e.event() {
                 std::thread::sleep(std::time::Duration::from_nanos(1000));
