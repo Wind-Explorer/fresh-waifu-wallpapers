@@ -5,7 +5,7 @@ mod refresh_wallpaper;
 mod notifications;
 mod cache_management;
 mod window_management;
-
+mod configuration_manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, SystemTraySubmenu};
 
 fn main() {
@@ -32,10 +32,15 @@ fn main() {
     
     let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
-        .setup(|_| {
+        .setup(|app| {
+            configuration_manager::retrieve_identifier(app.handle());
+            configuration_manager::initialize_configuration();
+
             notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.");
             Ok(())
         })
+        
+        // Limits the window resize event to reduce lag.
         .on_window_event(|e| {
             if let tauri::WindowEvent::Resized(_) = e.event() {
                 std::thread::sleep(std::time::Duration::from_nanos(1000));

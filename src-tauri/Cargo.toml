@@ -21,6 +21,7 @@ wallpaper = "3.2.0"
 image = "0.24.6"
 nekosbest = "0.17.0"
 opener = {version = "0.6.1", features = ["reveal"] }
+toml = "0.7.6"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

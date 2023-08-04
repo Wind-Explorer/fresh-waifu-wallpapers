@@ -3,7 +3,7 @@ use tauri::api::path::cache_dir;
 use opener::reveal;
 
 pub fn resolve_cache_dir() -> PathBuf {
-  return cache_dir().unwrap().join("WaifuWallpaperFetcher");
+  return cache_dir().unwrap().join(crate::configuration_manager::resolve_bundle_identifier());
 }
 
 pub fn clear_cache() {
