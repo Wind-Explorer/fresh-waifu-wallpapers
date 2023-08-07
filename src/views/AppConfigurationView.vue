@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { invoke, window } from '@tauri-apps/api';
+import { resolveResource } from '@tauri-apps/api/path';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ref } from 'vue';
 
 var category_on_disk = ref("");
@@ -47,13 +49,15 @@ let category_image_path = [
 ];
 
 var selected_category = ref(0);
+var category_background_image = ref(convertFileSrc(await resolveResource(category_image_path[selected_category.value])));
 
-function increment_selection() {
+async function increment_selection() {
   if (selected_category.value == categories.length - 1) {
     selected_category.value = 0;
   } else {
     selected_category.value++;
   }
+  category_background_image.value = convertFileSrc(await resolveResource(category_image_path[selected_category.value]));
 }
 
 function apply_preference() {
@@ -76,7 +80,7 @@ function hide_window() {
           <p id="selection-text">{{ categories[selected_category].toUpperCase() }}</p>
           <button v-on:click="increment_selection()">Next</button>
         </div>
-        <img id="category-background-image" :src="category_image_path[selected_category]"/>
+        <img id="category-background-image" v-bind:src="category_background_image"/>
       </div>
     </div>
     <div class="action-button-section">

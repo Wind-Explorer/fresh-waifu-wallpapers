@@ -13,6 +13,9 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "path": {
+        "all": true
+      },
       "shell": {
         "all": false,
         "open": true
@@ -20,13 +23,15 @@
       "fs": {
         "all": true,
         "scope": [
-          "$APPCACHE/**"
+          "$APPCACHE/**",
+          "$RESOURCE/*"
         ]
       },
       "protocol": {
         "asset": true,
         "assetScope": [
-          "$APPCACHE/**"
+          "$APPCACHE/**",
+          "$RESOURCE/**"
         ]
       },
       "notification": {
@@ -47,10 +52,14 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "resources": [
+        "../src/assets/**",
+        "../src/assets/media/*.png"
       ]
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "windows": [
       {

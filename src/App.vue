@@ -4,7 +4,9 @@ import AppConfigurationPane from './views/AppConfigurationView.vue';
 
 <template>
   <div class="container">
-    <AppConfigurationPane></AppConfigurationPane>
+    <Suspense>
+      <AppConfigurationPane></AppConfigurationPane>
+    </Suspense>
   </div>
 </template>
 
