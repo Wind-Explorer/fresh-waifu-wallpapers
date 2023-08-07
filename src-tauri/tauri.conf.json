@@ -31,6 +31,10 @@
       },
       "notification": {
         "all": true
+      },
+      "window": {
+        "all": false,
+        "hide": true
       }
     },
     "bundle": {
@@ -51,10 +55,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
         "title": "Preferences",
-        "width": 800,
-        "height": 600,
+        "width": 500,
+        "height": 300,
         "visible": false
       }
     ],

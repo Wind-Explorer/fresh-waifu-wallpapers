@@ -53,7 +53,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![configuration_manager::resolve_user_preference_as_string, configuration_manager::set_preference_from_string])
         .system_tray(system_tray)
         .on_system_tray_event(|_app, event| match event {
             SystemTrayEvent::LeftClick {

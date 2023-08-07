@@ -81,7 +81,8 @@ pub fn retrieve_user_config() -> ConfigData {
   return user_config;
 }
 
-pub fn str_to_category(preference: &str) -> Category {
+pub fn str_to_category(user_preference: String) -> Category {
+  let preference = user_preference.as_str();
   match preference {
     "neko" => return Category::Neko,
     "bored" => return Category::Bored,
@@ -123,5 +124,17 @@ pub fn category_to_str(category: Category) -> &'static str {
 
 pub fn resolve_user_preference() -> nekosbest::Category {
   let user_config = retrieve_user_config();
-  return str_to_category(user_config.user_preference.as_str());
+  return str_to_category(user_config.user_preference);
+}
+
+#[tauri::command]
+pub fn resolve_user_preference_as_string() -> String {
+  let user_config = retrieve_user_config();
+  return user_config.user_preference;
+}
+
+// JS/TS wrapper for `register_configuration()` above.
+#[tauri::command]
+pub fn set_preference_from_string(user_preference: String) {
+  register_configuration(Some(user_preference.as_str()));
 }
