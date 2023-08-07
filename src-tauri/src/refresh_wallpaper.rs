@@ -1,6 +1,8 @@
 use image::{DynamicImage, EncodableLayout, GenericImageView, ImageOutputFormat};
 use std::{io::Cursor, path::PathBuf};
 
+use crate::configuration_manager;
+
 pub fn sanitize_image_dimensions(image_obj: &DynamicImage) -> Option<DynamicImage> {
     // Get image dimensions
     let (width, height) = image_obj.dimensions();
@@ -41,7 +43,7 @@ pub async fn download_file_from_url(
 }
 
 pub async fn new_wallpaper_url() -> Result<String, reqwest::Error> {
-  let img_url: String = nekosbest::get(nekosbest::Category::Neko).await.unwrap().url;
+  let img_url: String = nekosbest::get(configuration_manager::resolve_user_preference()).await.unwrap().url;
   return Ok(img_url);
 }
 
