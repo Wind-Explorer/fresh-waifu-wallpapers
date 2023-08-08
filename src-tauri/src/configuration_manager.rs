@@ -11,7 +11,7 @@ pub struct ConfigData {
 }
 
 fn resolve_bundle_identifier_path() -> PathBuf {
-  return cache_dir().unwrap().join("wwf.id");
+  return cache_dir().unwrap().join(format!("{}.id", std::process::id()));
 }
 
 pub fn retrieve_identifier(app: tauri::AppHandle) {
