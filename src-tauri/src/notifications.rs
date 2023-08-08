@@ -1,5 +1,5 @@
-pub fn send_notification(title: &str, body: &str) {
-  match tauri::api::notification::Notification::new("cn.Wind-Explorer.freshwaifuwallpaper")
+pub fn send_notification(title: &str, body: &str, bundle_identifier: &str) {
+  match tauri::api::notification::Notification::new(bundle_identifier)
   .title(title)
   .body(body)
   .show() {

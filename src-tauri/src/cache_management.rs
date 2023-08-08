@@ -14,7 +14,7 @@ pub fn clear_cache() {
       match std::fs::create_dir(&path) {
         Ok(_) => {
           println!("Creation of cache dir successful!");
-          crate::notifications::send_notification("Cache has been cleared!", "Room for new waifu wallpapers!");
+          crate::notifications::send_notification("Cache has been cleared!", "Room for new waifu wallpapers!", crate::configuration_manager::resolve_bundle_identifier().as_str());
         },
         Err(_) => eprintln!("Creation of cache dir failed!")
       };

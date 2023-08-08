@@ -36,7 +36,7 @@ fn main() {
             configuration_manager::retrieve_identifier(app.handle());
             configuration_manager::initialize_configuration();
 
-            notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.");
+            notifications::send_notification("Hello, waifu wallpaper enjoyer!", "Look for me in the system tray.", crate::configuration_manager::resolve_bundle_identifier().as_str());
             Ok(())
         })
         

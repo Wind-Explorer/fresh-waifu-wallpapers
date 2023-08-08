@@ -48,7 +48,7 @@ pub async fn new_wallpaper_url() -> Result<String, reqwest::Error> {
 }
 
 pub async fn refresh_wallpaper() -> Result<(), ()> {
-    crate::notifications::send_notification("Finding new wallpaper...", "This will take a second.");
+    crate::notifications::send_notification("Finding new wallpaper...", "This will take a second.", crate::configuration_manager::resolve_bundle_identifier().as_str());
     let client = reqwest::Client::new();
     let dl_url = new_wallpaper_url().await.unwrap();
     let file_name = dl_url.split("/").collect::<Vec<&str>>();
@@ -59,7 +59,7 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
     match wallpaper::set_from_path(downloaded_file.display().to_string().as_str()) {
       Ok(_) => {
         println!("Successfully set wallpaper.");
-        crate::notifications::send_notification("Found one!", "Hope you like it.");
+        crate::notifications::send_notification("Found one!", "Hope you like it.", crate::configuration_manager::resolve_bundle_identifier().as_str());
         match wallpaper::set_mode(wallpaper::Mode::Crop) {
           Ok(()) => (),
           Err(_) => eprintln!("Failed to set wallpaper crop mode!"),
@@ -69,4 +69,3 @@ pub async fn refresh_wallpaper() -> Result<(), ()> {
     };
     return Ok(());
 }
-
