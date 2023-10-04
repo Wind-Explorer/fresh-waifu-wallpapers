@@ -83,43 +83,11 @@ pub fn retrieve_user_config() -> ConfigData {
 
 pub fn str_to_category(user_preference: String) -> Category {
   let preference = user_preference.as_str();
-  match preference {
-    "neko" => return Category::Neko,
-    "bored" => return Category::Bored,
-    "cry" => return Category::Cry,
-    "facepalm" => return Category::Facepalm,
-    "happy" => return Category::Happy,
-    "dance" => return Category::Dance,
-    "laugh" => return Category::Laugh,
-    "smile" => return Category::Smile,
-    "blush" => return Category::Blush,
-    "handhold" => return Category::Handhold,
-    "shoot" => return Category::Shoot,
-    "smug" => return Category::Smug,
-    "think" => return Category::Think,
-    "cuddle" => return Category::Cuddle,
-    &_ => todo!()
-  }
+  preference.parse().expect("Valid category")
 }
 
 pub fn category_to_str(category: Category) -> &'static str {
-  match category {
-      Category::Neko => "neko",
-      Category::Bored => "bored",
-      Category::Cry => "cry",
-      Category::Facepalm => "facepalm",
-      Category::Happy => "happy",
-      Category::Dance => "dance",
-      Category::Laugh => "laugh",
-      Category::Smile => "smile",
-      Category::Blush => "blush",
-      Category::Handhold => "handhold",
-      Category::Shoot => "shoot",
-      Category::Smug => "smug",
-      Category::Think => "think",
-      Category::Cuddle => "cuddle",
-      _ => todo!()
-  }
+  category.to_url_name()
 }
 
 pub fn resolve_user_preference() -> nekosbest::Category {
